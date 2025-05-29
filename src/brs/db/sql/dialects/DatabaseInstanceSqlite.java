@@ -106,6 +106,8 @@ public class DatabaseInstanceSqlite extends DatabaseInstanceBaseImpl {
   @Override
   protected void onStartupImpl() {
 
+    checkIntegrity();
+
     if (propertyService.getBoolean(Props.DB_OPTIMIZE)) {
       logger.info("SQLite optimization started...");
       executeSQL("PRAGMA optimize");
@@ -113,6 +115,21 @@ public class DatabaseInstanceSqlite extends DatabaseInstanceBaseImpl {
       executeSQL("VACUUM");
     }
 
+  }
+
+  private void checkIntegrity() {
+    try (java.sql.Connection con = getDataSource().getConnection();
+         java.sql.Statement st = con.createStatement();
+         java.sql.ResultSet rs = st.executeQuery("PRAGMA quick_check")) {
+      if (rs.next()) {
+        String result = rs.getString(1);
+        if (!"ok".equalsIgnoreCase(result)) {
+          throw new IllegalStateException("SQLite integrity check failed: " + result);
+        }
+      }
+    } catch (Exception e) {
+      logger.error("Failed to run SQLite integrity check", e);
+    }
   }
 
   @Override

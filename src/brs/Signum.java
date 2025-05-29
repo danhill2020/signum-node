@@ -224,6 +224,14 @@ public final class Signum {
 
         Signum.propertyService = propertyService;
 
+        int cfgRollback = propertyService.getInt(Props.DB_MAX_ROLLBACK);
+        if (cfgRollback < 1440) {
+            logger.warn("DB.maxRollback of {} is below recommended minimum of 1440, using 1440", cfgRollback);
+            cfgRollback = 1440;
+        }
+        Constants.MAX_ROLLBACK = cfgRollback;
+        logger.info("Max rollback set to {} blocks", Constants.MAX_ROLLBACK);
+
         String networkParametersClass = propertyService.getString(Props.NETWORK_PARAMETERS);
         NetworkParameters params = null;
         if (networkParametersClass != null) {

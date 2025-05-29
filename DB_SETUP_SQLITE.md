@@ -34,6 +34,12 @@ DB.Password=
 
 Setting `DB.Optimize=true` triggers optimization processes on node startup. Defragmentation (via `VACUUM`) may take several minutes, so patience is required.
 
+## Rollback history
+
+The property `DB.maxRollback` defines how many blocks of history are kept to
+resolve forks. Values lower than `1440` can lead to failed fork resolution. When
+unspecified or below the minimum, the node defaults to `1440` blocks.
+
 ## Journal Modes
 
 It's highly recommended to use "WAL" mode during syncing. SQLite supports [various journal modes](https://www.sqlite.org/pragma.html#pragma_journal_mode), but WAL mode typically offers better performance.
@@ -60,3 +66,10 @@ Running the `VACUUM` command periodically is advisable to defragment the databas
 ## WAL Journal
 
 The default journaling mode, "Write-Ahead-Logging" (WAL), creates an additional `.wal` file. During shutdown, a checkpoint is created to ensure data integrity. If using WAL mode, ensure both the `.db` and `.wal` files are copied together. Other journaling modes may be preferable if disk space is limited, though they may impact performance during syncing. The  `MEMORY` mode is not supported to prevent database corruption issues.
+
+### Integrity check
+
+If the node or host machine is not shut down cleanly, the SQLite file can become
+corrupted. Run `PRAGMA quick_check;` while the node is offline to verify the
+database state. The node executes this check automatically on startup and aborts
+if the result is anything other than `ok`.

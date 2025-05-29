@@ -218,6 +218,15 @@ If you run the minimum requirement you can turn off the `indirectIncomingService
 node.indirectIncomingService.enable = false
 ```
 
+### Database health and forks
+
+To resolve blockchain forks, the node needs a history of recent blocks. The
+`DB.maxRollback` property defines how many blocks are retained for this purpose.
+Values lower than `1440` are automatically increased to the minimum. The node
+performs a quick integrity check on the database at startup and will stop if
+corruption is detected. Occasional `SQLITE_BUSY` warnings are normal and are
+retried automatically.
+
 
 ## Testnet
 
