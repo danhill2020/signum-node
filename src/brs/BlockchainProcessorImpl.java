@@ -1177,6 +1177,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
         stores.rollbackTransaction();
         blockchain.setLastBlock(previousLastBlock);
         downloadCache.resetCache();
+        downloadCache.unlockCache();
         atProcessorCache.reset();
         throw e;
       } finally {
@@ -1605,6 +1606,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
             Convert.toUnsignedLong(block.getGeneratorId()), block.getStringId(), block.getHeight());
         }
         downloadCache.resetCache();
+        downloadCache.unlockCache();
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       } catch (TransactionNotAcceptedException e) {
