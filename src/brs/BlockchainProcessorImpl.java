@@ -662,6 +662,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
             logger.info("Forkprocessing complete.");
             downloadCache.resetForkBlocks();
             downloadCache.resetCache(); // Reset and set cached vars to chaindata.
+            downloadCache.unlockCache();
           }
         }
       }
